@@ -13,36 +13,39 @@ import (
 	"go-coinconv/pkg/coinmarketcap"
 )
 
-type CmdArgs struct {
-	Amount     float64
-	SymbolFrom string
-	SymbolTo   string
-}
-
-const requestTimeout = time.Second * 3
-
-// todo: move secrets into config files
 func main() {
 	cmdArgs, err := parseArgs(os.Args[1:])
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	// todo: move secrets into config files
 	coinMarketCapClient := coinmarketcap.NewClient(
 		"ab730ace-7180-42a8-8d5d-6ac3a19de87a",
 		"https://pro-api.coinmarketcap.com",
 	)
 	cmcProvider := provider.NewCoinMarketCapProvider(coinMarketCapClient)
-
-	ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
-	defer cancel()
-
-	symbolToPrice, err := cmcProvider.Convert(ctx, cmdArgs.Amount, cmdArgs.SymbolFrom, cmdArgs.SymbolTo)
+	conversionVal, err := convertCMD(cmdArgs, cmcProvider)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Println(strconv.FormatFloat(symbolToPrice, 'f', 8, 64))
+	fmt.Println(strconv.FormatFloat(conversionVal, 'f', 8, 64))
+}
+
+func convertCMD(cmdArgs *CmdArgs, convertor provider.Convertor) (float64, error) {
+	const requestTimeout = time.Second * 3
+
+	ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
+	defer cancel()
+
+	return convertor.Convert(ctx, cmdArgs.Amount, cmdArgs.SymbolFrom, cmdArgs.SymbolTo)
+}
+
+type CmdArgs struct {
+	Amount     float64
+	SymbolFrom string
+	SymbolTo   string
 }
 
 // todo: consider symbol args validation, avoiding extra api call

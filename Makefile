@@ -1,5 +1,5 @@
 build: ## Build
-	CGO_ENABLED=0 go build -o ./coinconv cmd/main.go
+	CGO_ENABLED=0 go build -o ./coinconv cmd/coinconv.go
 
 lint: ## Lint
 	golangci-lint run --timeout=3m
