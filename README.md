@@ -1,4 +1,4 @@
-# go-coinconv
+# go-coinconv [![go](https://github.com/artemgareev/go-coinconv/actions/workflows/go.yml/badge.svg)](https://github.com/artemgareev/go-coinconv/actions/workflows/go.yml)
 
 simple CLI app for crypto conversion, based on coinmarketcap API
 
